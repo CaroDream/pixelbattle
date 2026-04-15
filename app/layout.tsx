@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://your-domain.vercel.app'), // ← ZMIEŃ na swój adres Vercel
+  metadataBase: new URL('https://pixelbattle-nine.vercel.app'),
   title: 'Pixel Battle — Claim. Battle. Dominate.',
   description: 'Claim your pixel on the global grid. Battle other players. Dominate the map. The ultimate pixel territory war.',
   keywords: ['pixel', 'battle', 'game', 'territory', 'online', 'multiplayer', 'grid', 'pixel art'],
   openGraph: {
     title: 'Pixel Battle — Claim. Battle. Dominate.',
     description: 'Claim your pixel on the global grid. The ultimate pixel territory war!',
-    url: 'https://your-domain.vercel.app', // ← ZMIEŃ na swój adres Vercel
+    url: 'https://pixelbattle-nine.vercel.app', 
     siteName: 'Pixel Battle',
     images: [
       {
