@@ -1,9 +1,0 @@
-{
-  "name": "Pixel Battle",
-  "short_name": "PixelBattle",
-  "description": "Claim. Battle. Dominate.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0e0e18",
-  "theme_color": "#a855f7"
-}
