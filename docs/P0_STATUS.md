@@ -10,6 +10,7 @@
 - Idempotent paid-order handling.
 - Success page does not fulfill payment.
 - P0 CI workflow runs lint and build.
+- Production build failure in checkout reservation typing fixed.
 
 ## Remaining before production
 - Configure `STRIPE_WEBHOOK_SECRET` in the deployment environment.
