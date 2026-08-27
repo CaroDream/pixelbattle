@@ -30,11 +30,9 @@ export async function POST(request: Request) {
   try {
     switch (event.type) {
       case 'checkout.session.completed':
-      case 'checkout.session.async_payment_succeeded': {
-        const session = event.data.object as Stripe.Checkout.Session;
-        await fulfillSession(session);
+      case 'checkout.session.async_payment_succeeded':
+        await fulfillSession(event.data.object as Stripe.Checkout.Session);
         break;
-      }
 
       case 'checkout.session.expired': {
         const session = event.data.object as Stripe.Checkout.Session;
@@ -42,7 +40,7 @@ export async function POST(request: Request) {
           .from('pixel_orders')
           .update({ status: 'cancelled' })
           .eq('stripe_session_id', session.id)
-          .eq('status', 'pending');
+          .in('status', ['pending', 'processing']);
         break;
       }
 
@@ -72,76 +70,101 @@ async function fulfillSession(session: Stripe.Checkout.Session) {
     .maybeSingle();
 
   if (orderError || !order) throw new Error(`Order ${orderId} not found`);
-
   if (order.status === 'paid') return;
   if (order.status !== 'pending') throw new Error(`Order ${orderId} is ${order.status}`);
   if (order.stripe_session_id !== session.id) throw new Error('Stripe session mismatch');
   if (session.currency !== 'gbp') throw new Error('Unexpected currency');
   if (session.amount_total !== order.amount_cents) throw new Error('Amount mismatch');
 
-  // Validate the stored order data again before writing ownership.
-  const pixel = validatePixelInput({
-    x: order.x,
-    y: order.y,
-    color: order.color,
-    displayText: order.display_text,
-    countryFlag: order.country_flag,
-    socialLink: order.social_link,
-  });
+  // Atomically move the order out of pending so duplicate Stripe deliveries
+  // cannot fulfill the same order concurrently.
+  const { data: claimedOrder, error: claimError } = await supabaseAdmin
+    .from('pixel_orders')
+    .update({ status: 'processing' })
+    .eq('id', orderId)
+    .eq('status', 'pending')
+    .select('id')
+    .maybeSingle();
 
-  if (order.kind === 'claim') {
-    const { data: existing, error: existingError } = await supabaseAdmin
-      .from('Pixels')
-      .select('x, y')
-      .eq('x', pixel.x)
-      .eq('y', pixel.y)
-      .maybeSingle();
+  if (claimError) throw new Error(`Could not lock order: ${claimError.message}`);
+  if (!claimedOrder) return;
 
-    if (existingError) throw new Error(`Pixel availability check failed: ${existingError.message}`);
-    if (existing) throw new Error('Pixel was claimed before payment was fulfilled');
-
-    const { error: insertError } = await supabaseAdmin.from('Pixels').insert({
-      x: pixel.x,
-      y: pixel.y,
-      color: pixel.color,
-      display_text: pixel.displayText,
-      country_flag: pixel.countryFlag,
-      social_link: pixel.socialLink,
-      price: order.amount_cents / 100,
+  try {
+    const pixel = validatePixelInput({
+      x: order.x,
+      y: order.y,
+      color: order.color,
+      displayText: order.display_text,
+      countryFlag: order.country_flag,
+      socialLink: order.social_link,
     });
 
-    if (insertError) throw new Error(`Pixel insert failed: ${insertError.message}`);
-  } else {
     const { data: existing, error: existingError } = await supabaseAdmin
       .from('Pixels')
-      .select('x, y')
+      .select('x, y, color, display_text, country_flag, social_link, price')
       .eq('x', pixel.x)
       .eq('y', pixel.y)
       .maybeSingle();
 
     if (existingError) throw new Error(`Pixel lookup failed: ${existingError.message}`);
-    if (!existing) throw new Error('Reclaim target no longer exists');
 
-    const { error: updateError } = await supabaseAdmin
-      .from('Pixels')
-      .update({
-        color: pixel.color,
-        display_text: pixel.displayText,
-        country_flag: pixel.countryFlag,
-        social_link: pixel.socialLink,
-        price: order.amount_cents / 100,
-      })
-      .eq('x', pixel.x)
-      .eq('y', pixel.y);
+    const expectedPrice = order.amount_cents / 100;
+    const alreadyOurPixel = existing &&
+      existing.color === pixel.color &&
+      existing.display_text === pixel.displayText &&
+      existing.country_flag === pixel.countryFlag &&
+      (existing.social_link || null) === (pixel.socialLink || null) &&
+      Number(existing.price) === expectedPrice;
 
-    if (updateError) throw new Error(`Pixel update failed: ${updateError.message}`);
+    if (order.kind === 'claim') {
+      if (existing && !alreadyOurPixel) {
+        throw new Error('Pixel was claimed before this payment was fulfilled');
+      }
+
+      if (!existing) {
+        const { error: insertError } = await supabaseAdmin.from('Pixels').insert({
+          x: pixel.x,
+          y: pixel.y,
+          color: pixel.color,
+          display_text: pixel.displayText,
+          country_flag: pixel.countryFlag,
+          social_link: pixel.socialLink,
+          price: expectedPrice,
+        });
+        if (insertError) throw new Error(`Pixel insert failed: ${insertError.message}`);
+      }
+    } else {
+      if (!existing) throw new Error('Reclaim target no longer exists');
+
+      if (!alreadyOurPixel) {
+        const { error: updateError } = await supabaseAdmin
+          .from('Pixels')
+          .update({
+            color: pixel.color,
+            display_text: pixel.displayText,
+            country_flag: pixel.countryFlag,
+            social_link: pixel.socialLink,
+            price: expectedPrice,
+          })
+          .eq('x', pixel.x)
+          .eq('y', pixel.y);
+        if (updateError) throw new Error(`Pixel update failed: ${updateError.message}`);
+      }
+    }
+
+    const { error: orderUpdateError } = await supabaseAdmin
+      .from('pixel_orders')
+      .update({ status: 'paid', paid_at: new Date().toISOString() })
+      .eq('id', orderId)
+      .eq('status', 'processing');
+
+    if (orderUpdateError) throw new Error(`Order status update failed: ${orderUpdateError.message}`);
+  } catch (error) {
+    await supabaseAdmin
+      .from('pixel_orders')
+      .update({ status: 'pending' })
+      .eq('id', orderId)
+      .eq('status', 'processing');
+    throw error;
   }
-
-  const { error: orderUpdateError } = await supabaseAdmin
-    .from('pixel_orders')
-    .update({ status: 'paid', paid_at: new Date().toISOString() })
-    .eq('id', orderId)
-    .eq('status', 'pending');
-
-  if (orderUpdateError) throw new Error(`Order status update failed: ${orderUpdateError.message}`);
 }
