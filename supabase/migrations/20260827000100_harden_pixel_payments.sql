@@ -33,6 +33,11 @@ create unique index if not exists pixel_orders_active_pixel_idx
   on public.pixel_orders (x, y)
   where status in ('pending', 'processing');
 
+-- A pixel coordinate is a single logical resource. This prevents two successful
+-- webhook deliveries from creating two rows for the same coordinate.
+create unique index if not exists pixels_xy_unique_idx
+  on public."Pixels" (x, y);
+
 alter table public.pixel_orders enable row level security;
 revoke all on table public.pixel_orders from anon, authenticated;
 
