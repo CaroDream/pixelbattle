@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export async function POST(request: NextRequest) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
@@ -11,31 +9,19 @@ export async function POST(request: NextRequest) {
   if (!signature) return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
   const rawBody = await request.text();
   let event: Stripe.Event;
-  try { event = stripe.webhooks.constructEvent(rawBody, signature, secret); }
-  catch { return NextResponse.json({ error: 'Invalid signature' }, { status: 400 }); }
-
+  try { event = stripe.webhooks.constructEvent(rawBody, signature, secret); } catch { return NextResponse.json({ error: 'Invalid signature' }, { status: 400 }); }
   try {
     if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
       const session = event.data.object as Stripe.Checkout.Session;
       if (session.payment_status !== 'paid') return NextResponse.json({ received: true });
       const orderId = session.metadata?.order_id;
       if (!orderId) throw new Error('Missing order_id');
-      const { data: order, error } = await supabaseAdmin.from('pixel_orders').select('*').eq('id', orderId).single();
+      const { data: order, error } = await supabaseAdmin.from('pixel_orders').select('amount_gbp_pence,status').eq('id', orderId).single();
       if (error || !order) throw new Error('Order not found');
       if (Number(session.amount_total) !== order.amount_gbp_pence) throw new Error('Amount mismatch');
       if (order.status === 'paid') return NextResponse.json({ received: true });
-      const { error: pixelError } = await supabaseAdmin.from('Pixels').insert({
-        x: order.x, y: order.y, color: order.color, display_text: order.display_text || 'Anonymous',
-        country_flag: order.country_flag || 'global', social_link: order.social_link,
-        price: order.amount_gbp_pence / 100,
-      });
-      if (pixelError) throw pixelError;
-      const { error: updateError } = await supabaseAdmin.from('pixel_orders').update({
-        status: 'paid', paid_at: new Date().toISOString(), stripe_session_id: session.id,
-        stripe_payment_intent_id: typeof session.payment_intent === 'string' ? session.payment_intent : null,
-      }).eq('id', orderId).eq('status', 'pending');
-      if (updateError) throw updateError;
-      await supabaseAdmin.from('pixel_reservations').delete().eq('order_id', orderId);
+      const { error: fulfillError } = await supabaseAdmin.rpc('fulfill_pixel_order', { p_order_id: orderId, p_stripe_session_id: session.id, p_payment_intent_id: typeof session.payment_intent === 'string' ? session.payment_intent : null });
+      if (fulfillError) throw fulfillError;
     } else if (event.type === 'checkout.session.expired') {
       const session = event.data.object as Stripe.Checkout.Session;
       const orderId = session.metadata?.order_id;
@@ -45,8 +31,5 @@ export async function POST(request: NextRequest) {
       }
     }
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('Stripe webhook fulfillment error:', error);
-    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
-  }
+  } catch (error) { console.error('Stripe webhook fulfillment error:', error); return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 }); }
 }
