@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,6 +7,11 @@ export async function GET(request: NextRequest) {
     if (!sessionId || !/^cs_(test_|live_)?[A-Za-z0-9_]+$/.test(sessionId)) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 400 });
     }
+
+    const { default: Stripe } = await import('stripe');
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) return NextResponse.json({ error: 'Payment service not configured' }, { status: 503 });
+    const stripe = new Stripe(secretKey);
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['payment_intent'],
@@ -24,12 +26,8 @@ export async function GET(request: NextRequest) {
       .eq('id', orderId)
       .single();
 
-    if (error || !order) {
-      return NextResponse.json({ status: 'unknown' }, { status: 404 });
-    }
+    if (error || !order) return NextResponse.json({ status: 'unknown' }, { status: 404 });
 
-    // The webhook is the only authority that fulfills an order. Never infer
-    // a successful purchase from Stripe alone on the client-facing endpoint.
     return NextResponse.json({
       status: order.status,
       order: {
@@ -41,9 +39,7 @@ export async function GET(request: NextRequest) {
         social_link: order.social_link,
         amount_gbp_pence: order.amount_gbp_pence,
       },
-    }, {
-      headers: { 'Cache-Control': 'no-store' },
-    });
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch {
     return NextResponse.json({ error: 'Unable to verify payment' }, { status: 500 });
   }
