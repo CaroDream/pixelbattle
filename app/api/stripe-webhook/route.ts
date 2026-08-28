@@ -1,15 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!secret) return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  const stripeSecret = process.env.STRIPE_SECRET_KEY;
+  if (!secret || !stripeSecret) return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+
   const signature = request.headers.get('stripe-signature');
   if (!signature) return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+
   const rawBody = await request.text();
+  const stripe = new Stripe(stripeSecret);
   let event: Stripe.Event;
-  try { event = stripe.webhooks.constructEvent(rawBody, signature, secret); } catch { return NextResponse.json({ error: 'Invalid signature' }, { status: 400 }); }
+  try {
+    event = stripe.webhooks.constructEvent(rawBody, signature, secret);
+  } catch {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
   try {
     if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -31,5 +42,8 @@ export async function POST(request: NextRequest) {
       }
     }
     return NextResponse.json({ received: true });
-  } catch (error) { console.error('Stripe webhook fulfillment error:', error); return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 }); }
+  } catch (error) {
+    console.error('Stripe webhook fulfillment error:', error);
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
+  }
 }
