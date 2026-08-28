@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
     const {data:reservation,error:reservationError}=await supabaseAdmin.rpc('reserve_pixel',{p_x:x,p_y:y,p_color:color,p_display_text:displayText||'Anonymous',p_country_flag:countryFlag,p_social_link:socialLink});
     const row=Array.isArray(reservation)?reservation[0]:reservation;
     if(reservationError||!row)return NextResponse.json({error:reservationError?.message||'Tile unavailable'},{status:409});
-    const orderId=String((row as { order_id:string }).order_id);
-    const amount=Number((row as { amount_gbp_pence:number }).amount_gbp_pence);
+    const orderId=String((row as {order_id:string}).order_id);
+    const amount=Number((row as {amount_gbp_pence:number}).amount_gbp_pence);
     if(!Number.isInteger(amount)||amount<=0)return NextResponse.json({error:'Invalid server price'},{status:500});
 
     const stripeSecret = process.env.STRIPE_SECRET_KEY;
