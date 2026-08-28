@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Keep the map zoom controls anchored to the viewport on phones. */
+@media (max-width: 767px) {
+  .absolute.bottom-4.right-4.z-30 {
+    position: fixed !important;
+    bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    right: 1rem !important;
+    z-index: 80 !important;
+  }
+}
