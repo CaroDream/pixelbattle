@@ -34,3 +34,13 @@ body {
     z-index: 80 !important;
   }
 }
+
+/* Make the battlefield easier to read at a glance without changing tile ownership colours. */
+.flex-1.overflow-auto > div > div {
+  filter: brightness(1.22) saturate(1.18);
+}
+
+/* Give the empty-grid separators a little more definition. */
+.flex-1.overflow-auto > div > div > div {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.045);
+}
