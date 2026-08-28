@@ -9,6 +9,11 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      # The server client validates these at module load during Next.js build.
+      # CI only needs non-secret placeholders; real credentials stay in Vercel.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      SUPABASE_SECRET_KEY: ci-build-placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
