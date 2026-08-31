@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import PlayerAccount from './components/PlayerAccount';
+import ChatEnhancements from './components/ChatEnhancements';
 
 const BASE_URL = 'https://pixelbattle-nine.vercel.app';
 
@@ -19,17 +20,18 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en"><head>
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#11111b" />
+    <meta name="theme-color" content="#080d16" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   </head><body>
     <PlayerAccount />
+    <ChatEnhancements />
     {children}
     <nav aria-label="PixelBattle navigation" style={{position:'fixed',right:12,bottom:12,zIndex:9999,display:'flex',gap:6,flexWrap:'wrap',justifyContent:'flex-end',maxWidth:'calc(100vw - 24px)'}}>
-      <a href="/leaderboard" style={{background:'rgba(17,17,27,.94)',color:'#fff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid #3b3b50',backdropFilter:'blur(8px)'}}>🏆 RANK</a>
-      <a href="/teams" style={{background:'rgba(17,17,27,.94)',color:'#fff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid #3b3b50',backdropFilter:'blur(8px)'}}>⚔️ WAR</a>
-      <a href="/missions" style={{background:'rgba(17,17,27,.94)',color:'#fff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid #3b3b50',backdropFilter:'blur(8px)'}}>🎯 MISSIONS</a>
-      <a href="/share" style={{background:'#f59e0b',color:'#111827',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:900,boxShadow:'0 4px 18px rgba(245,158,11,.25)'}}>📣 SHARE</a>
+      <a href="/leaderboard" style={{background:'rgba(8,13,22,.96)',color:'#f5f9ff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid rgba(0,229,255,.22)',backdropFilter:'blur(8px)'}}>🏆 RANK</a>
+      <a href="/teams" style={{background:'rgba(8,13,22,.96)',color:'#f5f9ff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid rgba(0,229,255,.22)',backdropFilter:'blur(8px)'}}>⚔️ WAR</a>
+      <a href="/missions" style={{background:'rgba(8,13,22,.96)',color:'#f5f9ff',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:800,border:'1px solid rgba(0,229,255,.22)',backdropFilter:'blur(8px)'}}>🎯 MISSIONS</a>
+      <a href="/share" style={{background:'#ff8a00',color:'#08101a',padding:'8px 11px',borderRadius:10,textDecoration:'none',fontSize:12,fontWeight:900,boxShadow:'0 4px 18px rgba(255,138,0,.25)'}}>📣 SHARE</a>
     </nav>
   </body></html>;
 }
