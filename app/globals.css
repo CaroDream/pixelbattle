@@ -25,32 +25,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html, body {
-  background: var(--pb-bg) !important;
-  color: var(--pb-ink) !important;
-  overflow-x: hidden;
-  overscroll-behavior-x: none;
-}
+html, body { background: var(--pb-bg) !important; color: var(--pb-ink) !important; overflow-x: hidden; overscroll-behavior-x: none; }
+body { margin: 0; font-family: Arial, Helvetica, sans-serif; overflow-x: hidden; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
-  overscroll-behavior: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* --------------------------------------------------------------------------
-   Bright arcade system. The old purple/pink/dark dashboard palette is not
-   allowed to leak through the product UI anymore.
-   -------------------------------------------------------------------------- */
+/* Bright arcade palette: legacy dark/purple/pink UI is neutralised. */
 .bg-purple-600,.bg-purple-500,.bg-purple-700 { background-color: var(--pb-blue) !important; }
 .bg-pink-600,.bg-pink-500,.bg-pink-700 { background-color: var(--pb-orange) !important; }
 .bg-\[\#0e0e18\],.bg-\[\#080d16\],.bg-gray-950,.bg-gray-900 { background-color: var(--pb-bg) !important; }
 .bg-white\/5 { background-color: rgba(255,255,255,.86) !important; }
 .bg-white\/10 { background-color: rgba(16,36,62,.06) !important; }
 .bg-black\/20,.bg-black\/30,.bg-black\/40,.bg-black\/50 { background-color: rgba(16,36,62,.08) !important; }
-
 .text-white { color: var(--pb-ink) !important; }
 .text-gray-100,.text-gray-200,.text-gray-300 { color: #213953 !important; }
 .text-gray-400,.text-gray-500,.text-gray-600 { color: var(--pb-muted) !important; }
@@ -59,162 +43,54 @@ body {
 .text-orange-400,.text-orange-300 { color: var(--pb-orange) !important; }
 .border-white\/10,.border-white\/20,.border-gray-700,.border-gray-800 { border-color: var(--pb-border) !important; }
 .border-purple-500\/50:focus { border-color: rgba(23,105,255,.55) !important; }
-
 .from-purple-600,.from-purple-500 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(23 105 255 / 0) var(--tw-gradient-to-position) !important; }
 .via-pink-600,.via-pink-500 { --tw-gradient-via: var(--pb-orange) var(--tw-gradient-via-position) !important; }
 .to-purple-600,.to-purple-500 { --tw-gradient-to: var(--pb-cyan) var(--tw-gradient-to-position) !important; }
 .to-pink-600,.to-pink-500 { --tw-gradient-to: var(--pb-orange) var(--tw-gradient-to-position) !important; }
-
-/* Any legacy inline purple/pink tokens are neutralised too. */
 [style*="168,85,247"],[style*="#a855f7"] { background-color: rgba(23,105,255,.10) !important; border-color: rgba(23,105,255,.24) !important; color: var(--pb-blue) !important; }
 [style*="236,72,153"],[style*="#ec4899"] { background-color: rgba(255,122,24,.10) !important; border-color: rgba(255,122,24,.24) !important; color: var(--pb-orange) !important; }
 
-/* --------------------------------------------------------------------------
-   Viewport chrome: zoom must never travel with the map.
-   -------------------------------------------------------------------------- */
-.flex.flex-col.gap-1.absolute.bottom-4.right-4.z-30 {
-  position: fixed !important;
-  right: max(12px, env(safe-area-inset-right)) !important;
-  bottom: max(88px, calc(env(safe-area-inset-bottom) + 82px)) !important;
-  z-index: 1200 !important;
-  transform: none !important;
-}
-.flex.flex-col.gap-1.absolute.bottom-4.right-4.z-30 button {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  background: #ffffff !important;
-  color: var(--pb-ink) !important;
-  border: 1px solid var(--pb-border) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 22px rgba(16,36,62,.14) !important;
-}
+/* Fixed zoom: never moves with the map or document scroll. */
+.flex.flex-col.gap-1.absolute.bottom-4.right-4.z-30 { position: fixed !important; right: max(12px, env(safe-area-inset-right)) !important; bottom: max(88px, calc(env(safe-area-inset-bottom) + 82px)) !important; z-index: 1200 !important; transform: none !important; }
+.flex.flex-col.gap-1.absolute.bottom-4.right-4.z-30 button { width: 44px !important; height: 44px !important; min-width: 44px !important; min-height: 44px !important; background: #fff !important; color: var(--pb-ink) !important; border: 1px solid var(--pb-border) !important; border-radius: 12px !important; box-shadow: 0 8px 22px rgba(16,36,62,.14) !important; }
 .flex.flex-col.gap-1.absolute.bottom-4.right-4.z-30 button:nth-child(2) { color: var(--pb-blue) !important; }
 
-/* --------------------------------------------------------------------------
-   Chat: floating mobile card, never a full-page scroll target.
-   -------------------------------------------------------------------------- */
-.fixed.bottom-14.left-4.z-\[100\] {
-  position: fixed !important;
-  left: max(10px, env(safe-area-inset-left)) !important;
-  right: max(10px, env(safe-area-inset-right)) !important;
-  bottom: max(12px, env(safe-area-inset-bottom)) !important;
-  width: auto !important;
-  max-width: none !important;
-  z-index: 2000 !important;
-  pointer-events: none;
-  transform: none !important;
-}
-.fixed.bottom-14.left-4.z-\[100\] > div:first-child {
-  width: min(390px, calc(100vw - 20px)) !important;
-  max-height: min(58dvh, 500px) !important;
-  overflow: hidden !important;
-  pointer-events: auto;
-  margin-left: 0 !important;
-  background: #ffffff !important;
-  color: var(--pb-ink) !important;
-  border: 1px solid var(--pb-border) !important;
-  border-radius: 18px !important;
-  box-shadow: 0 20px 55px rgba(16,36,62,.18) !important;
-}
-.fixed.bottom-14.left-4.z-\[100\] .h-72 {
-  height: clamp(140px, 30dvh, 230px) !important;
-  max-height: calc(58dvh - 150px) !important;
-  overflow-y: auto !important;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-.fixed.bottom-14.left-4.z-\[100\] input,
-.fixed.bottom-14.left-4.z-\[100\] select,
-.fixed.bottom-14.left-4.z-\[100\] textarea {
-  font-size: 16px !important;
-  color: var(--pb-ink) !important;
-  background: #ffffff !important;
-  border-color: var(--pb-border) !important;
-}
-.fixed.bottom-14.left-4.z-\[100\] input:focus,
-.fixed.bottom-14.left-4.z-\[100\] select:focus,
-.fixed.bottom-14.left-4.z-\[100\] textarea:focus {
-  outline: 3px solid rgba(23,105,255,.13) !important;
-  border-color: var(--pb-blue) !important;
-}
+/* Chat: fixed bright card, internal scroll only. */
+.fixed.bottom-14.left-4.z-\[100\] { position: fixed !important; left: max(10px, env(safe-area-inset-left)) !important; right: max(10px, env(safe-area-inset-right)) !important; bottom: max(74px, calc(env(safe-area-inset-bottom) + 68px)) !important; width: auto !important; max-width: none !important; z-index: 2000 !important; pointer-events: none; transform: none !important; }
+.fixed.bottom-14.left-4.z-\[100\] > div:first-child { width: min(390px, calc(100vw - 20px)) !important; max-height: min(54dvh, 470px) !important; overflow: hidden !important; pointer-events: auto; margin-left: 0 !important; background: #fff !important; color: var(--pb-ink) !important; border: 1px solid var(--pb-border) !important; border-radius: 18px !important; box-shadow: 0 20px 55px rgba(16,36,62,.18) !important; }
+.fixed.bottom-14.left-4.z-\[100\] .h-72 { height: clamp(130px, 27dvh, 220px) !important; max-height: calc(54dvh - 150px) !important; overflow-y: auto !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.fixed.bottom-14.left-4.z-\[100\] input,.fixed.bottom-14.left-4.z-\[100\] select,.fixed.bottom-14.left-4.z-\[100\] textarea { font-size: 16px !important; color: var(--pb-ink) !important; background: #fff !important; border-color: var(--pb-border) !important; }
+.fixed.bottom-14.left-4.z-\[100\] input:focus,.fixed.bottom-14.left-4.z-\[100\] select:focus,.fixed.bottom-14.left-4.z-\[100\] textarea:focus { outline: 3px solid rgba(23,105,255,.13) !important; border-color: var(--pb-blue) !important; }
 .fixed.bottom-14.left-4.z-\[100\] p.text-sm { color: var(--pb-ink) !important; }
-
 select option { background: #fff; color: var(--pb-ink); }
-
-/* Chat country selector inserted by ChatEnhancements. */
 [data-pb-chat-country] { margin-top: 10px !important; }
 [data-pb-chat-country] label { color: var(--pb-muted) !important; }
 [data-pb-chat-country] select { min-height: 42px !important; }
 
-/* --------------------------------------------------------------------------
-   Bottom navigation: mobile order is WAR, CHAT, RANK, MISSIONS, SHARE.
-   CHAT is given visual priority; the inline dark styles are overridden.
-   -------------------------------------------------------------------------- */
-nav[aria-label="PixelBattle navigation"] {
-  position: fixed !important;
-  left: 10px !important;
-  right: 10px !important;
-  bottom: max(8px, env(safe-area-inset-bottom)) !important;
-  width: auto !important;
-  max-width: none !important;
-  z-index: 3000 !important;
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  justify-content: center !important;
-  align-items: stretch !important;
-  gap: 5px !important;
-  padding: 6px !important;
-  background: rgba(255,255,255,.96) !important;
-  border: 1px solid var(--pb-border) !important;
-  border-radius: 17px !important;
-  box-shadow: 0 12px 35px rgba(16,36,62,.16) !important;
-  backdrop-filter: blur(14px) !important;
-}
-nav[aria-label="PixelBattle navigation"] a {
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
-  padding: 9px 5px !important;
-  border-radius: 11px !important;
-  border: 1px solid transparent !important;
-  background: transparent !important;
-  color: var(--pb-ink) !important;
-  box-shadow: none !important;
-  text-align: center !important;
-  font-size: 10px !important;
-  line-height: 1.1 !important;
-  white-space: nowrap !important;
-}
-nav[aria-label="PixelBattle navigation"] a:nth-child(1) { order: 3 !important; }
-nav[aria-label="PixelBattle navigation"] a:nth-child(2) { order: 1 !important; }
-nav[aria-label="PixelBattle navigation"] a:nth-child(3) { order: 4 !important; }
-nav[aria-label="PixelBattle navigation"] a:nth-child(4) { order: 5 !important; background: var(--pb-orange) !important; color: #fff !important; }
+/* Bottom navigation: WAR → CHAT → RANK → MISSIONS → SHARE. */
+nav[aria-label="PixelBattle navigation"] { position: fixed !important; left: 8px !important; right: 8px !important; bottom: max(8px, env(safe-area-inset-bottom)) !important; width: auto !important; max-width: none !important; z-index: 3000 !important; display: flex !important; flex-wrap: nowrap !important; justify-content: center !important; align-items: stretch !important; gap: 5px !important; padding: 6px !important; background: rgba(255,255,255,.97) !important; border: 1px solid var(--pb-border) !important; border-radius: 17px !important; box-shadow: 0 12px 35px rgba(16,36,62,.16) !important; backdrop-filter: blur(14px) !important; }
+nav[aria-label="PixelBattle navigation"] a { flex: 1 1 0 !important; min-width: 0 !important; padding: 9px 4px !important; border-radius: 11px !important; border: 1px solid transparent !important; background: transparent !important; color: var(--pb-ink) !important; box-shadow: none !important; text-align: center !important; font-size: 10px !important; line-height: 1.1 !important; white-space: nowrap !important; }
+nav[aria-label="PixelBattle navigation"] a:nth-child(1) { order: 1 !important; }
+nav[aria-label="PixelBattle navigation"] a:nth-child(2) { order: 2 !important; background: var(--pb-blue) !important; color: #fff !important; }
+nav[aria-label="PixelBattle navigation"] a:nth-child(3) { order: 3 !important; }
+nav[aria-label="PixelBattle navigation"] a:nth-child(4) { order: 4 !important; }
+nav[aria-label="PixelBattle navigation"] a:nth-child(5) { order: 5 !important; background: var(--pb-orange) !important; color: #fff !important; }
 nav[aria-label="PixelBattle navigation"] a:hover { background: var(--pb-panel-2) !important; }
 
-/* --------------------------------------------------------------------------
-   General cards and controls: bright, high contrast, touch friendly.
-   -------------------------------------------------------------------------- */
 .pb-mobile-shell { background: var(--pb-bg) !important; color: var(--pb-ink) !important; min-height: 100dvh; }
 .pb-card { background: #fff !important; border: 1px solid var(--pb-border) !important; border-radius: 18px; box-shadow: var(--pb-shadow); }
 .pb-primary { background: linear-gradient(135deg, var(--pb-blue), var(--pb-cyan)) !important; color: #fff !important; }
 .pb-battle { background: linear-gradient(135deg, var(--pb-orange), var(--pb-gold)) !important; color: #16243a !important; }
 button, a { touch-action: manipulation; }
 
-/* Prevent the document itself from becoming the mobile game canvas. */
 @media (max-width: 767px) {
   html, body { min-height: 100%; }
   body { background: var(--pb-bg) !important; }
-  nav[aria-label="PixelBattle navigation"] { left: 8px !important; right: 8px !important; }
-  .fixed.bottom-14.left-4.z-\[100\] > div:first-child { max-height: min(56dvh, 480px) !important; }
+  .fixed.bottom-14.left-4.z-\[100\] > div:first-child { max-height: min(54dvh, 470px) !important; }
   .pb-desktop-only { display: none !important; }
 }
-
 @media (min-width: 768px) {
   nav[aria-label="PixelBattle navigation"] { left: auto !important; right: 14px !important; bottom: 14px !important; width: auto !important; }
   nav[aria-label="PixelBattle navigation"] a { flex: 0 0 auto !important; padding: 8px 11px !important; font-size: 12px !important; }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
-}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
