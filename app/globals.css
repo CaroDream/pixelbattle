@@ -35,12 +35,18 @@ body {
   }
 }
 
-/* Make the battlefield easier to read at a glance without changing tile ownership colours. */
+/* Bright, high-contrast battlefield: the map should be readable immediately on mobile. */
 .flex-1.overflow-auto > div > div {
-  filter: brightness(1.22) saturate(1.18);
+  filter: brightness(1.65) saturate(1.32) contrast(1.08);
 }
 
-/* Give the empty-grid separators a little more definition. */
+/* Stronger tile separation while keeping the existing ownership colours intact. */
 .flex-1.overflow-auto > div > div > div {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.045);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.11), inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+/* A subtle highlight around the battlefield gives the grid a cleaner, more tactile edge. */
+.flex-1.overflow-auto > div > div {
+  outline: 1px solid rgba(255, 255, 255, 0.10);
+  outline-offset: 2px;
 }
