@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #07111f;
-  --foreground: #f5f9ff;
-  --pb-bg: #07111f;
-  --pb-panel: #0c1929;
-  --pb-panel-2: #102338;
-  --pb-cyan: #19d9ff;
-  --pb-blue: #3478ff;
-  --pb-orange: #ff8b2d;
-  --pb-gold: #ffd166;
-  --pb-danger: #ff5268;
+  --background: #f4f9ff;
+  --foreground: #10243e;
+  --pb-bg: #f4f9ff;
+  --pb-panel: #ffffff;
+  --pb-panel-2: #eef6ff;
+  --pb-cyan: #08aeea;
+  --pb-blue: #126cff;
+  --pb-orange: #ff6b16;
+  --pb-gold: #ffb000;
+  --pb-danger: #e53957;
+  --pb-ink: #10243e;
+  --pb-muted: #5d718a;
+  --pb-border: #d7e7f7;
 }
 
 @theme inline {
@@ -24,65 +27,77 @@ html, body { background: var(--pb-bg); color: var(--foreground); }
 html { overflow-x: hidden; overscroll-behavior-x: none; }
 body { font-family: Arial, Helvetica, sans-serif; overflow-x: hidden; overscroll-behavior: none; }
 
-.bg-purple-600 { background-color: var(--pb-blue) !important; }
-.bg-pink-600 { background-color: var(--pb-orange) !important; }
-.from-purple-600 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(52 120 255 / 0) var(--tw-gradient-to-position) !important; }
-.via-pink-600 { --tw-gradient-via: var(--pb-orange) var(--tw-gradient-via-position) !important; }
-.to-purple-600 { --tw-gradient-to: var(--pb-blue) var(--tw-gradient-to-position) !important; }
-.to-pink-600 { --tw-gradient-to: var(--pb-orange) var(--tw-gradient-to-position) !important; }
-.from-purple-500 { --tw-gradient-from: #19d9ff var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(25 217 255 / 0) var(--tw-gradient-to-position) !important; }
-.via-pink-500 { --tw-gradient-via: #ff9d3d var(--tw-gradient-via-position) !important; }
-.to-purple-500 { --tw-gradient-to: #19d9ff var(--tw-gradient-to-position) !important; }
-.to-pink-500 { --tw-gradient-to: #ff9d3d var(--tw-gradient-to-position) !important; }
-.text-purple-400, .text-purple-300 { color: var(--pb-cyan) !important; }
-.text-pink-400 { color: #ff9d3d !important; }
+/* Legacy purple/pink utilities are deliberately mapped to the new bright palette. */
+.bg-purple-600,.bg-purple-500 { background-color: var(--pb-blue) !important; }
+.bg-pink-600,.bg-pink-500 { background-color: var(--pb-orange) !important; }
+.from-purple-600,.from-purple-500 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(18 108 255 / 0) var(--tw-gradient-to-position) !important; }
+.via-pink-600,.via-pink-500 { --tw-gradient-via: var(--pb-orange) var(--tw-gradient-via-position) !important; }
+.to-purple-600,.to-purple-500 { --tw-gradient-to: var(--pb-cyan) var(--tw-gradient-to-position) !important; }
+.to-pink-600,.to-pink-500 { --tw-gradient-to: var(--pb-orange) var(--tw-gradient-to-position) !important; }
+.text-purple-400,.text-purple-300,.text-purple-500 { color: var(--pb-blue) !important; }
+.text-pink-400,.text-pink-300 { color: var(--pb-orange) !important; }
 .text-orange-400 { color: var(--pb-orange) !important; }
-.border-purple-500\/50:focus { border-color: rgb(25 217 255 / .55) !important; }
-.bg-purple-500\/10 { background-color: rgb(25 217 255 / .10) !important; }
-.border-purple-500\/20 { border-color: rgb(25 217 255 / .20) !important; }
-.shadow-purple-900\/40 { --tw-shadow-color: rgb(25 120 255 / .38) !important; }
+.border-purple-500\/50:focus { border-color: rgb(18 108 255 / .55) !important; }
+.bg-purple-500\/10 { background-color: rgb(18 108 255 / .10) !important; }
+.border-purple-500\/20 { border-color: rgb(18 108 255 / .20) !important; }
+.shadow-purple-900\/40 { --tw-shadow-color: rgb(18 108 255 / .20) !important; }
 
-/* Zoom HUD is viewport UI, not battlefield content. */
+/* Keep interactive overlays in the viewport; never inside the scrolling map. */
 .absolute.bottom-4.right-4.z-30 {
   position: fixed !important;
-  right: max(14px, env(safe-area-inset-right)) !important;
-  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  bottom: max(12px, env(safe-area-inset-bottom)) !important;
   z-index: 900 !important;
 }
 
-/* Mobile chat stays anchored while the software keyboard changes the viewport. */
+/* Chat is a viewport panel. Do not call scrollIntoView on focus: mobile browsers already
+   resize the visual viewport for the keyboard and that call makes the whole home screen jump. */
 .fixed.bottom-14.left-4.z-\[100\] {
   position: fixed !important;
-  left: max(12px, env(safe-area-inset-left)) !important;
-  bottom: max(12px, env(safe-area-inset-bottom)) !important;
-  max-width: calc(100vw - 24px) !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  width: auto !important;
+  max-width: none !important;
   z-index: 1000 !important;
+  pointer-events: none;
 }
-
 .fixed.bottom-14.left-4.z-\[100\] > div:first-child {
-  width: min(380px, calc(100vw - 24px)) !important;
-  max-height: min(70dvh, 620px) !important;
+  width: min(390px, calc(100vw - 20px)) !important;
+  max-height: min(62dvh, 560px) !important;
   overflow: hidden !important;
+  pointer-events: auto;
+  background: var(--pb-panel) !important;
+  color: var(--pb-ink) !important;
+  border: 1px solid var(--pb-border) !important;
+  box-shadow: 0 18px 50px rgba(16,36,62,.16) !important;
 }
-
 .fixed.bottom-14.left-4.z-\[100\] .h-72 {
-  height: clamp(180px, 42dvh, 288px) !important;
-  max-height: calc(70dvh - 132px) !important;
+  height: clamp(150px, 34dvh, 250px) !important;
+  max-height: calc(62dvh - 140px) !important;
   overflow-y: auto !important;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
-
 .fixed.bottom-14.left-4.z-\[100\] input,
-.fixed.bottom-14.left-4.z-\[100\] select { font-size: 16px !important; scroll-margin: 0 !important; }
-.fixed.bottom-14.left-4.z-\[100\] p.text-sm { color: #e4edf8 !important; }
+.fixed.bottom-14.left-4.z-\[100\] select,
+.fixed.bottom-14.left-4.z-\[100\] textarea { font-size: 16px !important; }
+.fixed.bottom-14.left-4.z-\[100\] p.text-sm { color: var(--pb-ink) !important; }
 
-select option { background: #101b2b; color: #fff; }
+select option { background: #fff; color: var(--pb-ink); }
+
+/* New utility classes for the mobile-first shell. */
+.pb-mobile-shell { background: var(--pb-bg); color: var(--pb-ink); min-height: 100dvh; }
+.pb-card { background: #fff; border: 1px solid var(--pb-border); border-radius: 18px; box-shadow: 0 8px 28px rgba(16,36,62,.08); }
+.pb-primary { background: linear-gradient(135deg, var(--pb-blue), var(--pb-cyan)); color: #fff; }
+.pb-battle { background: linear-gradient(135deg, var(--pb-orange), var(--pb-gold)); color: #15243a; }
 
 @media (max-width: 640px) {
-  .fixed.bottom-14.left-4.z-\[100\] > div:first-child { max-height: 68dvh !important; }
+  body { background: var(--pb-bg); }
+  .fixed.bottom-14.left-4.z-\[100\] > div:first-child { max-height: min(60dvh, 520px) !important; }
+  .pb-desktop-only { display: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
