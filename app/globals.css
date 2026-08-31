@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #080d16;
+  --background: #07111f;
   --foreground: #f5f9ff;
-  --pb-bg: #080d16;
-  --pb-panel: #0e1624;
-  --pb-panel-2: #121d2d;
-  --pb-cyan: #00e5ff;
-  --pb-blue: #3a86ff;
-  --pb-orange: #ff8a00;
-  --pb-gold: #ffbe0b;
-  --pb-danger: #ff4d5f;
+  --pb-bg: #07111f;
+  --pb-panel: #0c1929;
+  --pb-panel-2: #102338;
+  --pb-cyan: #19d9ff;
+  --pb-blue: #3478ff;
+  --pb-orange: #ff8b2d;
+  --pb-gold: #ffd166;
+  --pb-danger: #ff5268;
 }
 
 @theme inline {
@@ -21,30 +21,67 @@
 }
 
 html, body { background: var(--pb-bg); color: var(--foreground); }
-body { font-family: Arial, Helvetica, sans-serif; }
+html { overflow-x: hidden; overscroll-behavior-x: none; }
+body { font-family: Arial, Helvetica, sans-serif; overflow-x: hidden; overscroll-behavior: none; }
 
-/* PixelBattle arcade signal system. Purple/pink was overused in the previous build;
-   these overrides keep the existing component structure but give the battlefield a
-   distinct electric-blue/cyan + orange identity. */
 .bg-purple-600 { background-color: var(--pb-blue) !important; }
 .bg-pink-600 { background-color: var(--pb-orange) !important; }
-.from-purple-600 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(58 134 255 / 0) var(--tw-gradient-to-position) !important; }
+.from-purple-600 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(52 120 255 / 0) var(--tw-gradient-to-position) !important; }
 .via-pink-600 { --tw-gradient-via: var(--pb-orange) var(--tw-gradient-via-position) !important; }
 .to-purple-600 { --tw-gradient-to: var(--pb-blue) var(--tw-gradient-to-position) !important; }
 .to-pink-600 { --tw-gradient-to: var(--pb-orange) var(--tw-gradient-to-position) !important; }
-.from-purple-500 { --tw-gradient-from: #00d9ff var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(0 217 255 / 0) var(--tw-gradient-to-position) !important; }
-.via-pink-500 { --tw-gradient-via: #ff9f1a var(--tw-gradient-via-position) !important; }
-.to-purple-500 { --tw-gradient-to: #00d9ff var(--tw-gradient-to-position) !important; }
-.to-pink-500 { --tw-gradient-to: #ff9f1a var(--tw-gradient-to-position) !important; }
+.from-purple-500 { --tw-gradient-from: #19d9ff var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(25 217 255 / 0) var(--tw-gradient-to-position) !important; }
+.via-pink-500 { --tw-gradient-via: #ff9d3d var(--tw-gradient-via-position) !important; }
+.to-purple-500 { --tw-gradient-to: #19d9ff var(--tw-gradient-to-position) !important; }
+.to-pink-500 { --tw-gradient-to: #ff9d3d var(--tw-gradient-to-position) !important; }
 .text-purple-400, .text-purple-300 { color: var(--pb-cyan) !important; }
-.text-pink-400 { color: #ff9f1a !important; }
+.text-pink-400 { color: #ff9d3d !important; }
 .text-orange-400 { color: var(--pb-orange) !important; }
-.border-purple-500\/50:focus { border-color: rgb(0 229 255 / .5) !important; }
-.bg-purple-500\/10 { background-color: rgb(0 229 255 / .10) !important; }
-.border-purple-500\/20 { border-color: rgb(0 229 255 / .20) !important; }
-.shadow-purple-900\/40 { --tw-shadow-color: rgb(0 140 255 / .40) !important; }
+.border-purple-500\/50:focus { border-color: rgb(25 217 255 / .55) !important; }
+.bg-purple-500\/10 { background-color: rgb(25 217 255 / .10) !important; }
+.border-purple-500\/20 { border-color: rgb(25 217 255 / .20) !important; }
+.shadow-purple-900\/40 { --tw-shadow-color: rgb(25 120 255 / .38) !important; }
 
-select option { background: #101a29; color: #fff; }
+/* Zoom HUD is viewport UI, not battlefield content. */
+.absolute.bottom-4.right-4.z-30 {
+  position: fixed !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  z-index: 900 !important;
+}
+
+/* Mobile chat stays anchored while the software keyboard changes the viewport. */
+.fixed.bottom-14.left-4.z-\[100\] {
+  position: fixed !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  max-width: calc(100vw - 24px) !important;
+  z-index: 1000 !important;
+}
+
+.fixed.bottom-14.left-4.z-\[100\] > div:first-child {
+  width: min(380px, calc(100vw - 24px)) !important;
+  max-height: min(70dvh, 620px) !important;
+  overflow: hidden !important;
+}
+
+.fixed.bottom-14.left-4.z-\[100\] .h-72 {
+  height: clamp(180px, 42dvh, 288px) !important;
+  max-height: calc(70dvh - 132px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fixed.bottom-14.left-4.z-\[100\] input,
+.fixed.bottom-14.left-4.z-\[100\] select { font-size: 16px !important; scroll-margin: 0 !important; }
+.fixed.bottom-14.left-4.z-\[100\] p.text-sm { color: #e4edf8 !important; }
+
+select option { background: #101b2b; color: #fff; }
+
+@media (max-width: 640px) {
+  .fixed.bottom-14.left-4.z-\[100\] > div:first-child { max-height: 68dvh !important; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
