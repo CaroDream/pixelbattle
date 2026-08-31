@@ -1,0 +1,25 @@
+name: P0 CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [security/p0-clean]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Build-only placeholders; real credentials stay in Vercel.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-public-anon-placeholder
+      SUPABASE_SECRET_KEY: ci-build-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
