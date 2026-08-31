@@ -56,10 +56,7 @@ export default function ChatEnhancements() {
       const row = document.createElement('div');
       row.setAttribute('data-pb-chat-country', 'true');
       row.style.cssText = 'margin-top:10px;';
-      row.innerHTML = `
-        <label style="display:block;color:#9fb0c7;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:6px">Country</label>
-        <select aria-label="Chat country" style="width:100%;height:42px;border-radius:12px;padding:0 12px;background:#101b2b;color:#f5f9ff;border:1px solid rgba(0,229,255,.28);outline:none;font-size:13px"></select>
-        <div style="font-size:10px;color:#6f8199;margin-top:5px">This country appears next to your name in chat.</div>`;
+      row.innerHTML = `<label style="display:block;color:#5d718a;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:6px">Country</label><select aria-label="Chat country" style="width:100%;height:42px;border-radius:12px;padding:0 12px;background:#fff;color:#10243e;border:1px solid #d7e7f7;outline:none;font-size:13px"></select><div style="font-size:10px;color:#5d718a;margin-top:5px">This country appears next to your name in chat.</div>`;
       wrapper.appendChild(row);
 
       const select = row.querySelector('select') as HTMLSelectElement;
@@ -77,23 +74,17 @@ export default function ChatEnhancements() {
       });
     };
 
-    const installMobileFocusGuard = () => {
-      const handler = (event: FocusEvent) => {
-        const target = event.target as HTMLElement | null;
-        if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) return;
-        if (!target.closest('.fixed.bottom-14.left-4')) return;
-        document.documentElement.classList.add('pb-chat-keyboard');
-        setTimeout(() => {
-          const chat = document.querySelector('.fixed.bottom-14.left-4') as HTMLElement | null;
-          if (chat) chat.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }, 50);
-      };
-      document.addEventListener('focusin', handler, true);
-      return () => document.removeEventListener('focusin', handler, true);
+    /* Never scroll the document on focus. On iOS/Android the browser handles the
+       visual viewport; forcing scrollIntoView is what previously made Home jump. */
+    const focusGuard = (event: FocusEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) return;
+      if (!target.closest('.fixed.bottom-14.left-4')) return;
+      document.documentElement.classList.add('pb-chat-keyboard');
     };
+    document.addEventListener('focusin', focusGuard, true);
 
     const syncSavedCountry = () => syncMainCountry();
-    const focusCleanup = installMobileFocusGuard();
     syncSavedCountry();
 
     const observer = new MutationObserver(() => {
@@ -104,7 +95,7 @@ export default function ChatEnhancements() {
 
     return () => {
       observer.disconnect();
-      focusCleanup();
+      document.removeEventListener('focusin', focusGuard, true);
       document.documentElement.classList.remove('pb-chat-keyboard');
     };
   }, []);
