@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #080d16;
+  --foreground: #f5f9ff;
+  --pb-bg: #080d16;
+  --pb-panel: #0e1624;
+  --pb-panel-2: #121d2d;
+  --pb-cyan: #00e5ff;
+  --pb-blue: #3a86ff;
+  --pb-orange: #ff8a00;
+  --pb-gold: #ffbe0b;
+  --pb-danger: #ff4d5f;
 }
 
 @theme inline {
@@ -12,15 +20,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html, body { background: var(--pb-bg); color: var(--foreground); }
+body { font-family: Arial, Helvetica, sans-serif; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* PixelBattle arcade signal system. Purple/pink was overused in the previous build;
+   these overrides keep the existing component structure but give the battlefield a
+   distinct electric-blue/cyan + orange identity. */
+.bg-purple-600 { background-color: var(--pb-blue) !important; }
+.bg-pink-600 { background-color: var(--pb-orange) !important; }
+.from-purple-600 { --tw-gradient-from: var(--pb-blue) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(58 134 255 / 0) var(--tw-gradient-to-position) !important; }
+.via-pink-600 { --tw-gradient-via: var(--pb-orange) var(--tw-gradient-via-position) !important; }
+.to-purple-600 { --tw-gradient-to: var(--pb-blue) var(--tw-gradient-to-position) !important; }
+.to-pink-600 { --tw-gradient-to: var(--pb-orange) var(--tw-gradient-to-position) !important; }
+.from-purple-500 { --tw-gradient-from: #00d9ff var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(0 217 255 / 0) var(--tw-gradient-to-position) !important; }
+.via-pink-500 { --tw-gradient-via: #ff9f1a var(--tw-gradient-via-position) !important; }
+.to-purple-500 { --tw-gradient-to: #00d9ff var(--tw-gradient-to-position) !important; }
+.to-pink-500 { --tw-gradient-to: #ff9f1a var(--tw-gradient-to-position) !important; }
+.text-purple-400, .text-purple-300 { color: var(--pb-cyan) !important; }
+.text-pink-400 { color: #ff9f1a !important; }
+.text-orange-400 { color: var(--pb-orange) !important; }
+.border-purple-500\/50:focus { border-color: rgb(0 229 255 / .5) !important; }
+.bg-purple-500\/10 { background-color: rgb(0 229 255 / .10) !important; }
+.border-purple-500\/20 { border-color: rgb(0 229 255 / .20) !important; }
+.shadow-purple-900\/40 { --tw-shadow-color: rgb(0 140 255 / .40) !important; }
+
+select option { background: #101a29; color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
