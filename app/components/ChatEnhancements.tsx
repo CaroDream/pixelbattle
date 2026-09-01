@@ -82,8 +82,6 @@ export default function ChatEnhancements() {
       });
     };
 
-    /* Mobile browsers should manage the visual viewport themselves. Never call
-       scrollIntoView here: it is the source of the Home-screen jump on focus. */
     const focusGuard = (event: FocusEvent) => {
       const target = event.target as HTMLElement | null;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) return;
@@ -100,8 +98,12 @@ export default function ChatEnhancements() {
       const panel = document.querySelector(CHAT_SELECTOR) as HTMLElement | null;
       if (!panel) return;
       preparePanel(panel);
-      const input = panel.querySelector('input[placeholder="Your name..."], textarea, input[type="text"]') as HTMLInputElement | HTMLTextAreaElement | null;
-      input?.focus({ preventScroll: true });
+      const toggle = panel.querySelector(':scope > button') as HTMLButtonElement | null;
+      if (toggle) toggle.click();
+      window.setTimeout(() => {
+        const input = panel.querySelector('input[placeholder="Your name..."], textarea, input[type="text"]') as HTMLInputElement | HTMLTextAreaElement | null;
+        input?.focus({ preventScroll: true });
+      }, 40);
     };
     document.addEventListener('click', handleChatNav, true);
 
