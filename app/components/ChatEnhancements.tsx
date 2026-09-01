@@ -28,6 +28,7 @@ const COUNTRIES = [
 ] as const;
 
 const STORAGE_KEY = 'pb_chat_country';
+const CHAT_SELECTOR = '.fixed.bottom-14.left-4.z-\\[100\\]';
 
 export default function ChatEnhancements() {
   useEffect(() => {
@@ -46,7 +47,14 @@ export default function ChatEnhancements() {
       }
     };
 
+    const preparePanel = (panel: HTMLElement) => {
+      panel.id = 'pixelbattle-chat';
+      panel.setAttribute('data-pb-chat-panel', 'true');
+      panel.style.scrollMarginBottom = '90px';
+    };
+
     const buildSelector = (panel: HTMLElement) => {
+      preparePanel(panel);
       if (panel.querySelector('[data-pb-chat-country]')) return;
       const nameInput = panel.querySelector('input[placeholder="Your name..."]') as HTMLInputElement | null;
       if (!nameInput) return;
@@ -56,7 +64,7 @@ export default function ChatEnhancements() {
       const row = document.createElement('div');
       row.setAttribute('data-pb-chat-country', 'true');
       row.style.cssText = 'margin-top:10px;';
-      row.innerHTML = `<label style="display:block;color:#5d718a;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:6px">Country</label><select aria-label="Chat country" style="width:100%;height:42px;border-radius:12px;padding:0 12px;background:#fff;color:#10243e;border:1px solid #d7e7f7;outline:none;font-size:13px"></select><div style="font-size:10px;color:#5d718a;margin-top:5px">This country appears next to your name in chat.</div>`;
+      row.innerHTML = `<label style="display:block;color:#61748b;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:6px">Country</label><select aria-label="Chat country" style="width:100%;height:42px;border-radius:12px;padding:0 12px;background:#fff;color:#10243e;border:1px solid #d8e7f5;outline:none;font-size:13px"></select><div style="font-size:10px;color:#61748b;margin-top:5px">This country appears next to your name in chat.</div>`;
       wrapper.appendChild(row);
 
       const select = row.querySelector('select') as HTMLSelectElement;
@@ -74,21 +82,36 @@ export default function ChatEnhancements() {
       });
     };
 
-    /* Never scroll the document on focus. On iOS/Android the browser handles the
-       visual viewport; forcing scrollIntoView is what previously made Home jump. */
     const focusGuard = (event: FocusEvent) => {
       const target = event.target as HTMLElement | null;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) return;
-      if (!target.closest('.fixed.bottom-14.left-4')) return;
+      if (!target.closest(CHAT_SELECTOR)) return;
       document.documentElement.classList.add('pb-chat-keyboard');
     };
     document.addEventListener('focusin', focusGuard, true);
+
+    const handleChatNav = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const link = target?.closest('a[href="#pixelbattle-chat"]') as HTMLAnchorElement | null;
+      if (!link) return;
+      event.preventDefault();
+      const panel = document.querySelector(CHAT_SELECTOR) as HTMLElement | null;
+      if (!panel) return;
+      preparePanel(panel);
+      const toggle = panel.querySelector(':scope > button') as HTMLButtonElement | null;
+      if (toggle) toggle.click();
+      window.setTimeout(() => {
+        const input = panel.querySelector('input[placeholder="Your name..."], textarea, input[type="text"]') as HTMLInputElement | HTMLTextAreaElement | null;
+        input?.focus({ preventScroll: true });
+      }, 40);
+    };
+    document.addEventListener('click', handleChatNav, true);
 
     const syncSavedCountry = () => syncMainCountry();
     syncSavedCountry();
 
     const observer = new MutationObserver(() => {
-      document.querySelectorAll('.fixed.bottom-14.left-4').forEach(el => buildSelector(el as HTMLElement));
+      document.querySelectorAll(CHAT_SELECTOR).forEach(el => buildSelector(el as HTMLElement));
       syncSavedCountry();
     });
     observer.observe(document.body, { childList: true, subtree: true });
@@ -96,6 +119,7 @@ export default function ChatEnhancements() {
     return () => {
       observer.disconnect();
       document.removeEventListener('focusin', focusGuard, true);
+      document.removeEventListener('click', handleChatNav, true);
       document.documentElement.classList.remove('pb-chat-keyboard');
     };
   }, []);
