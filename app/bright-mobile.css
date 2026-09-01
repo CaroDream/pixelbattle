@@ -1,28 +1,20 @@
-/* PixelBattle bright mobile-first visual system. Loaded after globals.css so legacy inline theme styling cannot dominate the product. */
-:root { --pb-bg: #f5f9ff; --pb-panel: #ffffff; --pb-panel-2: #eaf4ff; --pb-cyan: #00a9e8; --pb-blue: #1769ff; --pb-orange: #ff7a18; --pb-gold: #ffc43d; --pb-green: #12a36a; --pb-ink: #12233d; --pb-muted: #53677f; --pb-border: #d6e4f3; }
-html, body { background: #f5f9ff !important; color: #12233d !important; }
-.h-screen.flex.flex-col.overflow-hidden.relative { background: #f5f9ff !important; color: #12233d !important; }
-/* Kill the old dark decorative layer and legacy gradients. */
-.h-screen.flex.flex-col.overflow-hidden.relative > .fixed.inset-0 { display: none !important; }
-.bg-gradient-to-r.from-purple-400.via-pink-400.to-orange-400 { background-image: linear-gradient(90deg,#1769ff,#00a9e8) !important; }
-/* Brighten all interactive surfaces without changing user-owned tile colours. */
-.h-screen.flex.flex-col.overflow-hidden.relative header { background: rgba(255,255,255,.98) !important; border-color: #d6e4f3 !important; }
-.h-screen.flex.flex-col.overflow-hidden.relative aside { background: #ffffff !important; border-color: #d6e4f3 !important; }
-/* Floating chat is the single chat control; navigation owns the visible entry point. */
-.fixed.bottom-14.left-4.z-\\[100\\] > button { display: none !important; }
-.fixed.bottom-14.left-4.z-\\[100\\] { bottom: max(76px, calc(env(safe-area-inset-bottom) + 72px)) !important; left: 10px !important; right: 10px !important; }
-.fixed.bottom-14.left-4.z-\\[100\\] > div:first-child { margin-bottom: 0 !important; width: min(390px,calc(100vw - 20px)) !important; background: #ffffff !important; color: #12233d !important; border: 1px solid #d6e4f3 !important; }
-.fixed.bottom-14.left-4.z-\\[100\\] .h-72 { height: clamp(150px,30dvh,245px) !important; }
-.fixed.bottom-14.left-4.z-\\[100\\] input, .fixed.bottom-14.left-4.z-\\[100\\] textarea, .fixed.bottom-14.left-4.z-\\[100\\] select { background:#fff !important; color:#12233d !important; border-color:#d6e4f3 !important; }
-/* Navigation: one clear row, CHAT immediately before RANK. */
+/* PixelBattle bright mobile-first visual system. */
+:root { --pb-bg:#f5f9ff; --pb-panel:#fff; --pb-blue:#1769ff; --pb-cyan:#00a9e8; --pb-ink:#12233d; --pb-muted:#53677f; --pb-border:#d6e4f3; color-scheme:light; }
+html,body { background:#f5f9ff !important; color:#12233d !important; }
+.h-screen.flex.flex-col.overflow-hidden.relative { background:#f5f9ff !important; color:#12233d !important; }
+.h-screen.flex.flex-col.overflow-hidden.relative > .fixed.inset-0 { display:none !important; }
+.h-screen.flex.flex-col.overflow-hidden.relative header,.h-screen.flex.flex-col.overflow-hidden.relative aside { background:#fff !important; border-color:#d6e4f3 !important; }
+/* Floating chat is not a second CHAT navigation item. */
+.fixed.bottom-14.left-4 > button { display:none !important; }
+.fixed.bottom-14.left-4 { bottom:max(76px,calc(env(safe-area-inset-bottom) + 72px)) !important; left:10px !important; right:10px !important; }
+.fixed.bottom-14.left-4 > div:first-child { margin-bottom:0 !important; width:min(390px,calc(100vw - 20px)) !important; background:#fff !important; color:#12233d !important; border:1px solid #d6e4f3 !important; }
+.fixed.bottom-14.left-4 .h-72 { height:clamp(150px,30dvh,245px) !important; }
+.fixed.bottom-14.left-4 input,.fixed.bottom-14.left-4 textarea,.fixed.bottom-14.left-4 select { background:#fff !important; color:#12233d !important; border-color:#d6e4f3 !important; }
 nav[aria-label="PixelBattle navigation"] { background:#fff !important; border:1px solid #d6e4f3 !important; box-shadow:0 12px 35px rgba(16,36,62,.16) !important; }
 nav[aria-label="PixelBattle navigation"] a { color:#12233d !important; }
-nav[aria-label="PixelBattle navigation"] a:nth-child(2) { background:#1769ff !important; color:#fff !important; }
-nav[aria-label="PixelBattle navigation"] a:nth-child(3) { background:#fff !important; color:#12233d !important; }
-/* Make the main CTA unmistakably bright. */
-button.bg-gradient-to-r.from-purple-600.via-pink-600.to-purple-600, button.bg-gradient-to-r.from-purple-600.to-pink-600 { background:linear-gradient(135deg,#1769ff,#00a9e8) !important; color:#fff !important; }
+button.bg-gradient-to-r.from-purple-600.via-pink-600.to-purple-600,button.bg-gradient-to-r.from-purple-600.to-pink-600 { background:linear-gradient(135deg,#1769ff,#00a9e8) !important; color:#fff !important; }
 @media (max-width:767px) {
-  nav[aria-label="PixelBattle navigation"] { left:8px !important; right:8px !important; bottom:max(8px,env(safe-area-inset-bottom)) !important; }
-  nav[aria-label="PixelBattle navigation"] a { font-size:10px !important; min-height:44px !important; }
-  header { padding-left:12px !important; padding-right:12px !important; }
+ nav[aria-label="PixelBattle navigation"] { left:8px !important; right:8px !important; bottom:max(8px,env(safe-area-inset-bottom)) !important; }
+ nav[aria-label="PixelBattle navigation"] a { font-size:10px !important; min-height:44px !important; }
+ header { padding-left:12px !important; padding-right:12px !important; }
 }
