@@ -9,12 +9,12 @@ const supabase = createClient(
 
 const GRID_COLS = 50;
 const GRID_ROWS = 50;
-const TILE_SIZE = 32;
+const TILE_SIZE = 20;
 const PRICES = [0.49, 0.99, 1.99, 2.99];
 const MAX_URL_LENGTH = 2048;
 const MIN_ZOOM = 0.3;
 const MAX_ZOOM = 3;
-const ZOOM_STEP = 0.15;
+const ZOOM_STEP = 0.25;
 
 const COUNTRIES = [
   { name: 'Global', code: 'global' }, { name: 'Afghanistan', code: 'af' }, { name: 'Albania', code: 'al' },
@@ -577,9 +577,9 @@ export default function Home() {
   const [sidebarTab, setSidebarTab] = useState<'claim' | 'activity' | 'leaderboard'>('claim');
   const [searchQuery, setSearchQuery] = useState('');
   const [linkWarning, setLinkWarning] = useState('');
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768 ? 0.7 : 1);
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [mobilePanel, setMobilePanel] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -603,8 +603,8 @@ export default function Home() {
   }, [userCurrency]);
 
   useEffect(() => {
-    const savedDark = localStorage.getItem('pb_dark');
-    if (savedDark !== null) setDark(savedDark === 'true');
+    localStorage.setItem('pb_dark', 'false');
+    setDark(false);
     const savedSound = localStorage.getItem('pb_sound');
     if (savedSound !== null) setSoundEnabled(savedSound === 'true');
     setOnlineCount(Math.floor(Math.random() * 200) + 50);
