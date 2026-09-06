@@ -80,6 +80,17 @@ nav[aria-label="PixelBattle navigation"] a[href="/share"] { background:linear-gr
 [style*="rgba(14,14,24"],[style*="rgba(14,14,26"],[style*="rgba(20,20,40"],[style*="#0e0e18"] { background:#151f2d !important; color:var(--foreground) !important; }
 .fixed.inset-0.bg-black\/50 { background:rgba(0,0,0,.62) !important; }
 
+/* Final override: the LIVE CHAT card itself is always fully opaque. */
+.fixed.bottom-14.left-4.z-\[100\] > div:first-child {
+  background-color:#172131 !important;
+  background-image:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  isolation:isolate !important;
+}
+
 @media (max-width:767px) {
   header { min-height:58px !important; padding:9px 8px !important; }
   header .text-2xl { font-size:20px !important; }
