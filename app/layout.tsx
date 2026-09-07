@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './bright-mobile.css';
 import PlayerAccount from './components/PlayerAccount';
 import ChatEnhancements from './components/ChatEnhancements';
 
